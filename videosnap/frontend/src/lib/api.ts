@@ -1,33 +1,31 @@
 const API_BASE = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api';
 
 export async function analyzeVideo(url: string) {
-  const res = await fetch(`${API_BASE}/analyze`, {
+  const response = await fetch(`${API_BASE}/analyze`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ url }),
   });
   
-  if (!res.ok) {
-    const error = await res.json();
-    throw new Error(error.error || 'Analysis failed');
+  if (!response.ok) {
+    throw new Error('Failed to analyze video');
   }
   
-  return res.json();
+  return response.json();
 }
 
 export async function downloadVideo(url: string, formatId: string, filename: string) {
-  const res = await fetch(`${API_BASE}/download`, {
+  const response = await fetch(`${API_BASE}/download`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ url, formatId, filename }),
   });
   
-  if (!res.ok) {
-    const error = await res.json();
-    throw new Error(error.error || 'Download failed');
+  if (!response.ok) {
+    throw new Error('Failed to download');
   }
   
-  const blob = await res.blob();
+  const blob = await response.blob();
   const downloadUrl = URL.createObjectURL(blob);
   const a = document.createElement('a');
   a.href = downloadUrl;
