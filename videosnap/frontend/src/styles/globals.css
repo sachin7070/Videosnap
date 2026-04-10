@@ -1,0 +1,141 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@import url('https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,400&family=DM+Mono:wght@400;500&display=swap');
+
+:root {
+  --font-display: 'Syne', sans-serif;
+  --font-body:    'DM Sans', sans-serif;
+  --font-mono:    'DM Mono', monospace;
+
+  /* Light theme */
+  --bg-primary:   #f8f8fc;
+  --bg-card:      #ffffff;
+  --bg-input:     #f0f0f8;
+  --border:       rgba(100, 112, 241, 0.12);
+  --border-focus: rgba(100, 112, 241, 0.5);
+  --text-primary: #12121f;
+  --text-muted:   #6b6b8a;
+  --text-subtle:  #9999b8;
+  --accent:       #6470f1;
+  --accent-glow:  rgba(100, 112, 241, 0.2);
+  --success:      #22c55e;
+  --error:        #ef4444;
+  --warning:      #f59e0b;
+}
+
+.dark {
+  --bg-primary:   #0a0a14;
+  --bg-card:      #12121f;
+  --bg-input:     #1a1a2e;
+  --border:       rgba(100, 112, 241, 0.15);
+  --border-focus: rgba(100, 112, 241, 0.6);
+  --text-primary: #f0f0f8;
+  --text-muted:   #8888aa;
+  --text-subtle:  #5555775;
+  --accent:       #8193f8;
+  --accent-glow:  rgba(129, 147, 248, 0.15);
+  --success:      #4ade80;
+  --error:        #f87171;
+  --warning:      #fbbf24;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  scroll-behavior: smooth;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+  font-family: var(--font-body);
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
+  transition: background-color 0.3s ease, color 0.3s ease;
+  min-height: 100vh;
+}
+
+/* Noise texture overlay */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.03'/%3E%3C/svg%3E");
+  pointer-events: none;
+  z-index: 0;
+  opacity: 0.4;
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb {
+  background: var(--border);
+  border-radius: 3px;
+}
+::-webkit-scrollbar-thumb:hover { background: var(--accent-glow); }
+
+/* Selection */
+::selection {
+  background: var(--accent-glow);
+  color: var(--accent);
+}
+
+/* Focus visible */
+:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+  border-radius: 6px;
+}
+
+/* Glass card */
+.glass {
+  background: var(--bg-card);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid var(--border);
+}
+
+/* Shimmer loading */
+.shimmer {
+  background: linear-gradient(
+    90deg,
+    var(--bg-input) 25%,
+    rgba(100, 112, 241, 0.06) 50%,
+    var(--bg-input) 75%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 1.8s infinite;
+}
+
+@keyframes shimmer {
+  0%   { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+/* Platform color accents */
+.platform-youtube   { --platform-color: #FF0000; --platform-glow: rgba(255,0,0,0.15); }
+.platform-instagram { --platform-color: #E1306C; --platform-glow: rgba(225,48,108,0.15); }
+.platform-facebook  { --platform-color: #1877F2; --platform-glow: rgba(24,119,242,0.15); }
+.platform-twitter   { --platform-color: #1DA1F2; --platform-glow: rgba(29,161,242,0.15); }
+
+/* Gradient mesh background */
+.mesh-bg {
+  background:
+    radial-gradient(ellipse 80% 50% at 20% -10%, rgba(100,112,241,0.12) 0%, transparent 60%),
+    radial-gradient(ellipse 60% 40% at 80% 110%, rgba(129,147,248,0.08) 0%, transparent 60%),
+    var(--bg-primary);
+}
+
+.dark .mesh-bg {
+  background:
+    radial-gradient(ellipse 80% 50% at 20% -10%, rgba(100,112,241,0.08) 0%, transparent 60%),
+    radial-gradient(ellipse 60% 40% at 80% 110%, rgba(129,147,248,0.06) 0%, transparent 60%),
+    var(--bg-primary);
+}
