@@ -1,54 +1,97 @@
-import { Header } from '../components/ui/Header';
-import { DownloaderApp } from '../components/downloader/DownloaderApp';
-import { RecentDownloads } from '../components/downloader/RecentDownloads';
-import { Footer } from '../components/ui/Footer';
-import { FAQ } from '../components/ui/FAQ';
+'use client';
+
+import { useState } from 'react';
+import { analyzeVideo, downloadVideo } from '@/lib/api';
 
 export default function Home() {
+  const [url, setUrl] = useState('');
+  const [loading, setLoading] = useState(false);
+  const [videoInfo, setVideoInfo] = useState<any>(null);
+  const [selectedFormat, setSelectedFormat] = useState('');
+
+  const handleAnalyze = async () => {
+    if (!url) return;
+    setLoading(true);
+    try {
+      const info = await analyzeVideo(url);
+      setVideoInfo(info);
+      if (info.formats?.length) {
+        setSelectedFormat(info.formats[0].id);
+      }
+    } catch (error) {
+      alert('Error analyzing video');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleDownload = async () => {
+    if (!url || !selectedFormat) return;
+    setLoading(true);
+    try {
+      const filename = videoInfo?.title?.replace(/[^a-z0-9]/gi, '_') || 'video';
+      await downloadVideo(url, selectedFormat, `${filename}.mp4`);
+    } catch (error) {
+      alert('Error downloading video');
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
-    <main className="mesh-bg min-h-screen relative z-10">
-      <Header />
-
-      {/* Hero Section */}
-      <section className="pt-16 pb-8 px-4 text-center">
-        <div className="max-w-3xl mx-auto">
-          <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-medium mb-6
-                          bg-[var(--accent-glow)] text-[var(--accent)] border border-[var(--border-focus)]">
-            <span className="w-1.5 h-1.5 rounded-full bg-[var(--accent)] animate-pulse-slow" />
-            Free · No signup · No limits
-          </div>
-
-          <h1 className="font-display text-4xl sm:text-5xl lg:text-6xl font-bold tracking-tight mb-4
-                         text-[var(--text-primary)] leading-[1.1]">
-            Download any video,{' '}
-            <span className="text-[var(--accent)]">anywhere.</span>
-          </h1>
-
-          <p className="text-[var(--text-muted)] text-lg max-w-xl mx-auto leading-relaxed">
-            Paste a link from YouTube, Instagram, Facebook, or X — get your video in seconds.
-            No ads, no fluff, just downloads.
-          </p>
+    <main className="min-h-screen p-8 bg-gray-50 dark:bg-gray-900">
+      <div className="max-w-2xl mx-auto">
+        <h1 className="text-3xl font-bold text-center mb-8 text-gray-900 dark:text-white">
+          VideoSnap
+        </h1>
+        
+        <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6">
+          <input
+            type="text"
+            value={url}
+            onChange={(e) => setUrl(e.target.value)}
+            placeholder="Paste video URL here..."
+            className="w-full p-3 border rounded-lg mb-4 dark:bg-gray-700 dark:text-white"
+          />
+          
+          <button
+            onClick={handleAnalyze}
+            disabled={loading || !url}
+            className="w-full bg-blue-500 text-white p-3 rounded-lg hover:bg-blue-600 disabled:opacity-50"
+          >
+            {loading ? 'Processing...' : 'Analyze Video'}
+          </button>
+          
+          {videoInfo && (
+            <div className="mt-6">
+              <h2 className="text-xl font-semibold mb-2 dark:text-white">{videoInfo.title}</h2>
+              {videoInfo.thumbnail && (
+                <img src={videoInfo.thumbnail} alt="Thumbnail" className="w-full rounded-lg mb-4" />
+              )}
+              
+              <select
+                value={selectedFormat}
+                onChange={(e) => setSelectedFormat(e.target.value)}
+                className="w-full p-3 border rounded-lg mb-4 dark:bg-gray-700 dark:text-white"
+              >
+                {videoInfo.formats?.map((format: any) => (
+                  <option key={format.id} value={format.id}>
+                    {format.label || format.quality || format.resolution || format.ext}
+                  </option>
+                ))}
+              </select>
+              
+              <button
+                onClick={handleDownload}
+                disabled={loading}
+                className="w-full bg-green-500 text-white p-3 rounded-lg hover:bg-green-600"
+              >
+                Download
+              </button>
+            </div>
+          )}
         </div>
-      </section>
-
-      {/* Main Downloader */}
-      <section className="px-4 pb-12">
-        <div className="max-w-3xl mx-auto">
-          <DownloaderApp />
-        </div>
-      </section>
-
-      {/* Recent Downloads */}
-      <section className="px-4 pb-16">
-        <div className="max-w-3xl mx-auto">
-          <RecentDownloads />
-        </div>
-      </section>
-
-      {/* FAQ */}
-      <FAQ />
-
-      <Footer />
+      </div>
     </main>
   );
 }
