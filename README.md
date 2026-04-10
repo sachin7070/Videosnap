@@ -109,7 +109,7 @@ videosnap/
 ### 1. Clone & install
 
 ```bash
-git clone https://github.com/yourname/videosnap.git
+git clone https://github.com/sachin7070/videosnap.git
 cd videosnap
 
 # Backend
@@ -199,7 +199,7 @@ sudo apt install docker-compose-plugin
 ### Clone and deploy
 
 ```bash
-git clone https://github.com/yourname/videosnap.git
+git clone https://github.com/sachin7070/videosnap.git
 cd videosnap
 cp backend/.env.example backend/.env
 # Edit backend/.env with your settings
